@@ -1,0 +1,130 @@
+{% extends 'prediction/base.html' %}
+
+{% block content %}
+<div class="card">
+    <h1 style="text-align: center; margin-bottom: 2rem; color: #2c3e50;">Logistic Regression</h1>
+    <p style="text-align: center; margin-bottom: 2rem; color: #666;">Classify whether a house is expensive or affordable based on its features.</p>
+    
+    <form id="predictionForm" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="area">Area (sq ft)</label>
+            <input type="number" id="area" name="area" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bedrooms">Number of Bedrooms</label>
+            <input type="number" id="bedrooms" name="bedrooms" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bathrooms">Number of Bathrooms</label>
+            <input type="number" id="bathrooms" name="bathrooms" required>
+        </div>
+
+        <div class="form-group">
+            <label for="stories">Number of Stories</label>
+            <input type="number" id="stories" name="stories" required>
+        </div>
+
+        <div class="form-group">
+            <label for="mainroad">Main Road Access</label>
+            <select id="mainroad" name="mainroad" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="guestroom">Guest Room</label>
+            <select id="guestroom" name="guestroom" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="basement">Basement</label>
+            <select id="basement" name="basement" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="hotwaterheating">Hot Water Heating</label>
+            <select id="hotwaterheating" name="hotwaterheating" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="airconditioning">Air Conditioning</label>
+            <select id="airconditioning" name="airconditioning" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="parking">Number of Parking Spaces</label>
+            <input type="number" id="parking" name="parking" required>
+        </div>
+
+        <div class="form-group">
+            <label for="prefarea">Preferred Area</label>
+            <select id="prefarea" name="prefarea" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="furnishingstatus">Furnishing Status</label>
+            <select id="furnishingstatus" name="furnishingstatus" required>
+                <option value="furnished">Furnished</option>
+                <option value="semi-furnished">Semi-Furnished</option>
+                <option value="unfurnished">Unfurnished</option>
+            </select>
+        </div>
+
+        <button type="submit" style="width: 100%;">Classify House</button>
+    </form>
+
+    <div id="result" class="result" style="display: none;">
+        <h3>Classification Result</h3>
+        <p id="predictionText"></p>
+    </div>
+</div>
+
+<script>
+document.getElementById('predictionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    fetch('{% url "logistic_regression" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('predictionText').textContent = `This house is ${data.prediction}`;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while making the classification.');
+    });
+});
+</script>
+{% endblock %} 

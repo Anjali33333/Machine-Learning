@@ -1,0 +1,65 @@
+{% extends 'prediction/base.html' %}
+
+{% block content %}
+<div class="prediction-form">
+    <h2 class="mb-4">House Price Prediction</h2>
+    
+    <form id="predictionForm" method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="square_feet" class="form-label">Square Feet</label>
+            <input type="number" class="form-control" id="square_feet" name="square_feet" required min="500" max="10000">
+        </div>
+        
+        <div class="mb-3">
+            <label for="bedrooms" class="form-label">Number of Bedrooms</label>
+            <input type="number" class="form-control" id="bedrooms" name="bedrooms" required min="1" max="10">
+        </div>
+        
+        <div class="mb-3">
+            <label for="location" class="form-label">Location Category</label>
+            <select class="form-select" id="location" name="location" required>
+                <option value="">Select a location</option>
+                <option value="Urban">Urban</option>
+                <option value="Suburban">Suburban</option>
+                <option value="Rural">Rural</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Predict Price</button>
+    </form>
+    
+    <div class="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    
+    <div class="result"></div>
+</div>
+
+<script>
+document.getElementById('predictionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    showLoading();
+    
+    const formData = new FormData(this);
+    
+    fetch('{% url "polynomial" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        showResult(data.success, data.prediction || data.error);
+    })
+    .catch(error => {
+        showResult(false, 'An error occurred. Please try again.');
+    });
+});
+</script>
+{% endblock %} 

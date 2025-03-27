@@ -1,0 +1,40 @@
+{% extends 'prediction/base.html' %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="mb-4">Welcome to House Price Prediction</h1>
+    <p class="lead mb-4">Choose a prediction method to get started:</p>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Price Prediction</h5>
+                    <p class="card-text">Get an estimated price for your house based on its features.</p>
+                    <a href="{% url 'polynomial' %}" class="btn btn-primary">Try it</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Affordability Check</h5>
+                    <p class="card-text">Check if a house is affordable or expensive based on its features.</p>
+                    <a href="{% url 'logistic' %}" class="btn btn-primary">Try it</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Price Category</h5>
+                    <p class="card-text">Determine if a house is Basic, Standard, or Luxury.</p>
+                    <a href="{% url 'knn' %}" class="btn btn-primary">Try it</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,32 @@
+{% extends 'prediction/base.html' %}
+
+{% block content %}
+<div class="card">
+    <h1 style="text-align: center; margin-bottom: 2rem; color: #2c3e50;">House Price Prediction</h1>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        <div class="card" style="text-align: center;">
+            <h2 style="color: #3498db; margin-bottom: 1rem;">Polynomial Regression</h2>
+            <p style="margin-bottom: 1rem;">Predict house prices using polynomial regression analysis.</p>
+            <a href="{% url 'polynomial_regression' %}">
+                <button>Try Polynomial Regression</button>
+            </a>
+        </div>
+
+        <div class="card" style="text-align: center;">
+            <h2 style="color: #3498db; margin-bottom: 1rem;">Logistic Regression</h2>
+            <p style="margin-bottom: 1rem;">Classify houses as expensive or affordable using logistic regression.</p>
+            <a href="{% url 'logistic_regression' %}">
+                <button>Try Logistic Regression</button>
+            </a>
+        </div>
+
+        <div class="card" style="text-align: center;">
+            <h2 style="color: #3498db; margin-bottom: 1rem;">k-NN Classifier</h2>
+            <p style="margin-bottom: 1rem;">Predict house categories using k-Nearest Neighbors classification.</p>
+            <a href="{% url 'knn_classifier' %}">
+                <button>Try k-NN Classifier</button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

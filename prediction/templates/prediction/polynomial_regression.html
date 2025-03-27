@@ -1,0 +1,149 @@
+{% extends 'prediction/base.html' %}
+
+{% block content %}
+<div class="card">
+    <h1 style="text-align: center; margin-bottom: 2rem; color: #2c3e50;">Polynomial Regression</h1>
+    <form id="predictionForm" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="area">Area (sq ft)</label>
+            <input type="number" id="area" name="area" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bedrooms">Number of Bedrooms</label>
+            <input type="number" id="bedrooms" name="bedrooms" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bathrooms">Number of Bathrooms</label>
+            <input type="number" id="bathrooms" name="bathrooms" required>
+        </div>
+
+        <div class="form-group">
+            <label for="stories">Number of Stories</label>
+            <input type="number" id="stories" name="stories" required>
+        </div>
+
+        <div class="form-group">
+            <label for="mainroad">Main Road Access</label>
+            <select id="mainroad" name="mainroad" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="guestroom">Guest Room</label>
+            <select id="guestroom" name="guestroom" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="basement">Basement</label>
+            <select id="basement" name="basement" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="hotwaterheating">Hot Water Heating</label>
+            <select id="hotwaterheating" name="hotwaterheating" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="airconditioning">Air Conditioning</label>
+            <select id="airconditioning" name="airconditioning" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="parking">Number of Parking Spaces</label>
+            <input type="number" id="parking" name="parking" required>
+        </div>
+
+        <div class="form-group">
+            <label for="prefarea">Preferred Area</label>
+            <select id="prefarea" name="prefarea" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="furnishingstatus">Furnishing Status</label>
+            <select id="furnishingstatus" name="furnishingstatus" required>
+                <option value="0">Furnished</option>
+                <option value="1">Semi-Furnished</option>
+                <option value="2">Unfurnished</option>
+            </select>
+        </div>
+
+        <button type="submit" style="width: 100%;">Predict Price</button>
+    </form>
+
+    <div id="result" class="result" style="display: none;">
+        <h3>Prediction Result</h3>
+        <p id="predictionText"></p>
+    </div>
+
+    <div id="error" class="error" style="display: none; color: red; margin-top: 1rem;">
+        <p id="errorText"></p>
+    </div>
+</div>
+
+<script>
+document.getElementById('predictionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    // Show loading state
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    document.querySelector('button[type="submit"]').disabled = true;
+    document.querySelector('button[type="submit"]').textContent = 'Predicting...';
+
+    fetch('{% url "polynomial_regression" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('errorText').textContent = data.error;
+        } else {
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('predictionText').textContent = `Predicted Price: $${data.prediction}`;
+        }
+    })
+    .catch(error => {
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('errorText').textContent = 'An error occurred while making the prediction.';
+        console.error('Error:', error);
+    })
+    .finally(() => {
+        // Reset button state
+        document.querySelector('button[type="submit"]').disabled = false;
+        document.querySelector('button[type="submit"]').textContent = 'Predict Price';
+    });
+});
+</script>
+{% endblock %} 
